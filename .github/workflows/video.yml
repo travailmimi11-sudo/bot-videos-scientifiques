@@ -1,0 +1,41 @@
+
+name: Generer une video scientifique
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 16 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  creer-video:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Recuperer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Installer les bibliotheques
+        run: pip install -r requirements.txt
+
+      - name: Generer la video
+        run: python bot.py
+
+      - name: Sauvegarder la video
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-scientifique
+          path: videos/video_science.mp4
+          retention-days: 7
